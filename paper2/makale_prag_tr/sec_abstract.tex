@@ -1,0 +1,24 @@
+\textbf{Amaç} Elma bahçelerinde çalışan toplama robotu filolarının binlerce ağaç üzerinde
+rotalanması ve bir robot her döndüğünde yeniden planlanması gerekir, çünkü ağaç başına olgun meyve
+miktarı ancak toplama sırasında belirlenir. Mevcut min--maks rotalama çözücüleri
+dakikalardan saatlere uzanan bütçelerle değerlendirilmektedir. Bu çalışmada, bahçe ölçeğinde iyi filo
+planlarının ne kadar hızlı elde edilebileceği ve gerçekçi bir hasat senaryosunda hızlı yeniden planlamanın
+ne kadar yarar sağladığı araştırılmıştır.
+
+\textbf{Yöntem} Önce rota, sonra küme yaklaşımına dayalı bir planlayıcı olan PSB, Greedy-Edge dev turunu
+min--maks amacına göre optimal biçimde bölmekte, rotaları dengelemekte ve her an sonuç veren (anytime)
+bir aramayla iyileştirmektedir; yöntem ayrıca kasa kapasiteli seferleri ve ağaç konumlarından kestirilen
+bahçe eksenini kapsayacak biçimde genişletilmiştir. PSB, tek çekirdek üzerinde LKH-3 ve literatürde öne çıkan
+dört kodla, gerçek bahçe sınırları da dâhil \InstAll{} örnek üzerinde ve parametreleri
+literatürden alınan, kablolu drone hasat platformlarına ilişkin bir benzetimde karşılaştırılmıştır.
+
+\textbf{Bulgular} PSB ilk çözümü bir saniye içinde döndürmüş, 10\,s sonunda MILS'i örneklerin
+\SotaMilsWinTenAll\% kadarında geride bırakmış ve 5000'den fazla hedef içeren örneklerde
+600\,s sonunda onunla başa baş kalmıştır; buna karşın orta büyüklükteki örneklerde, birkaç dakikalık
+süre bulunduğunda MILS daha iyi sonuç vermiştir. Hasat benzetiminde PSB-MT/R ile yeniden planlama, ilk toplama
+geçişini statik sıra bantlarına kıyasla koşuların \HgFirstRowblockWin\% kadarında kısaltmış,
+bahçe ekseninin göz ardı edilmesi ise görevleri
+\HgFramePsbAxisZeroAbs\% uzatmıştır.
+
+\textbf{Sonuç} Hızlı ve bahçe eksenine duyarlı yeniden planlama, benzetilen bahçe ölçekli
+toplama filolarında görev süresini belirleyen önemli etkenlerdendir.

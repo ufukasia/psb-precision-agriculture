@@ -1,0 +1,29 @@
+\begin{tabular}{lrrrrrrr}
+\toprule
+method & first sol.\ [s] & 1\,s & 10\,s & 60\,s & final & PSB better [\%] & $p$ \\
+\midrule
+\multicolumn{8}{l}{\emph{$n<1000$, 43 instances}} \\
+PSB+LNS (ours) & 0.01 & 2.43 & 1.77 & 1.63 & 1.63 & -- & -- \\
+MILS & 0.08 & 3.58 & 1.12 & 0.01 & 0.00 & 23 & 3e-04 \\
+HGA & 3.11 & \ensuremath{\infty} & 14.37 & 0.87 & 0.48 & 26 & 1e-02 \\
+MA & 0.10 & 6.78 & 3.23 & 0.54 & 0.35 & 21 & 5e-03 \\
+HSNR & 0.08 & 7.93 & 1.31 & 0.26 & 0.00 & 19 & 7e-03 \\
+LKH-3 tuned & 2.04 & \ensuremath{\infty} & 2.10 & 0.86 & 0.57 & 28 & 6e-01 \\
+\midrule
+\multicolumn{8}{l}{\emph{$1000\le n<5000$, 54 instances}} \\
+PSB+LNS (ours) & 0.10 & 7.70 & 3.82 & 2.29 & 2.08 & -- & -- \\
+MILS & 4.73 & \ensuremath{\infty} & 23.04 & 2.90 & 0.00 & 17 & 4e-07 \\
+HGA & 52.57 & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & 10.42 & 91 & 7e-10 \\
+MA & 8.83 & \ensuremath{\infty} & 36.62 & 23.95 & 10.31 & 89 & 3e-09 \\
+HSNR & 30.33 & \ensuremath{\infty} & \ensuremath{\infty} & 41.19 & 15.05 & 83 & 5e-09 \\
+LKH-3 tuned & 244.97 & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & 31.53 & 85 & 2e-09 \\
+\midrule
+\multicolumn{8}{l}{\emph{$n\ge 5000$, 39 instances}} \\
+PSB+LNS (ours) & 0.33 & 4.82 & 3.65 & 1.82 & 0.81 & -- & -- \\
+MILS & 46.48 & \ensuremath{\infty} & \ensuremath{\infty} & 60.46 & 1.13 & 54 & 5e-01 \\
+HGA & 1007.72 & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & 100 & 6e-02 \\
+MA & 124.73 & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & 27.17 & 100 & 2e-10 \\
+HSNR & 606.54 & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & 59.92 & 100 & 2e-06 \\
+LKH-3 tuned & 600.87 & \ensuremath{\infty} & \ensuremath{\infty} & \ensuremath{\infty} & 97.14 & 100 & 4e-12 \\
+\bottomrule
+\end{tabular}

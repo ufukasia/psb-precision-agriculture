@@ -1,0 +1,118 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[turkish,shorthands=off]{babel}
+\usepackage{amsmath,amsthm}
+\usepackage{newtxtext,newtxmath}
+\usepackage[margin=25mm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage[mathlines]{lineno}
+\linenumbers
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage[section]{placeins}
+\makeatletter
+\newcommand{\rawinput}[1]{\@@input #1 }
+\makeatother
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{xcolor}
+\usepackage[round,authoryear]{natbib}
+\usepackage{xurl}
+\usepackage[hidelinks]{hyperref}
+\usepackage{nameref}
+\usepackage{siunitx}
+\sisetup{group-separator={,},group-minimum-digits=4}
+\usepackage[labelfont=bf,labelsep=space]{caption}
+\captionsetup[figure]{name=Şekil}
+\setlength{\emergencystretch}{2em}
+\setcounter{secnumdepth}{0}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\input{numbers.tex}
+\input{numbers_quality.tex}
+
+\title{Path--Split--Balance: kablolu drone platformlarıyla seçmeli elma hasadında
+saniyenin altında min--maks filo planlaması}
+\author{Ufuk Asil\\[2pt]
+\small OST\.{I}M Teknik Üniversitesi, Ankara, Türkiye\\
+\small ORCID: \href{https://orcid.org/0000-0001-6769-2097}{0000-0001-6769-2097}\\
+\small Sorumlu yazar: \texttt{ufuk.asil@ostimteknik.edu.tr}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent\input{sec_abstract.tex}
+\end{abstract}
+
+\noindent\textbf{Anahtar kelimeler} Seçmeli hasat $\cdot$ Çoklu robot rotalama $\cdot$
+Bahçe robotiği $\cdot$ Min--maks araç rotalama $\cdot$ Dinamik yeniden planlama $\cdot$
+Kablolu drone'lar
+
+\input{sec_intro.tex}
+\input{sec_related.tex}
+\input{sec_problem.tex}
+\input{sec_method.tex}
+\input{sec_setup.tex}
+\input{sec_results.tex}
+\input{sec_harvest.tex}
+\input{sec_discussion.tex}
+\input{sec_conclusion.tex}
+
+\section{Beyanlar}
+\paragraph{Finansman} Bu çalışma için herhangi bir finansman alınmamıştır.
+
+\paragraph{Çıkar çatışması} Bu makalenin içeriğiyle ilgili beyan edilecek
+bir çıkar çatışması bulunmamaktadır.
+
+\paragraph{Yazar katkıları} Ufuk Asil: kavramsallaştırma, yöntem, yazılım, biçimsel
+analiz, araştırma, görselleştirme, yazım -- ilk taslak, yazım -- gözden geçirme ve
+düzenleme.
+
+\paragraph{Veri erişilebilirliği} Örnekler, deneylerin koşu düzeyindeki ham
+kayıtları ve bu makaledeki sayıları, tabloları ve şekilleri üreten betikler
+\url{https://github.com/ufukasia/psb-precision-agriculture} adresindeki açık depoda
+sunulmaktadır; materyal kabulün ardından kalıcı bir Zenodo DOI ile arşivlenecektir.
+Bahçe sınırları OpenStreetMap verilerinden türetilmiştir (\copyright{} OpenStreetMap
+katkıcıları, ODbL).
+
+\paragraph{Kod erişilebilirliği} PSB uygulaması, LKH-3 3.0.13 ve diğer çözücülerin
+sarmalayıcıları, benzetimler ve Blender sahne üreteci aynı depoda MIT lisansıyla
+paylaşılmaktadır; üçüncü taraf çözücüler kendi lisanslarına tabidir. Benzetilen bir
+görevin açıklayıcı videosu Çevrimiçi Kaynak~1 olarak sunulmakta ve
+\url{https://github.com/ufukasia/psb-precision-agriculture/releases/download/v1.0.0/ESM_1.mp4}
+adresinden erişilebilmektedir.
+
+\appendix
+\section{Ek A: Literatür kümesinde örnek bazında sonuçlar}\label{app:lit}
+{\tiny
+\setlength{\tabcolsep}{2.6pt}
+\begin{longtable}{l*{11}{r}}
+\caption{Literatür örnekleri: referans değere göre sapma (\%; referans, yayımlanmış
+BKS ile \citet{hehaoxia2024} sonuçlarının en iyisidir). PSB tek atış sütunu yalnızca kurulum
+adımını gösterir; diğer sütunlar nihai değerlerdir (PSB: PSB+LNS; PSB+LNS ve LKH-3 için
+tohumlar üzerinden medyan); ``nihai'', bütçe sonundaki değeri ifade eder ($n<1000$ için 120\,s,
+$n<5000$ için 300\,s, aksi halde 600\,s). Kalın: en iyi nihai değer}\label{tab:lit}\\
+\rawinput{tab_lit.tex}
+\end{longtable}}
+
+\clearpage
+\section{Ek B: Tall Spindle sıralı bahçeler}\label{app:rows}
+{\scriptsize
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{lrrrrr}
+\caption{Tall Spindle bahçeler: beş tohum üzerinden ortalama görev süresi, PSB-MT/R'ye
+göre göreli fark, toplanan olgun meyve payı, platform süresinde yolun payı ve görev
+başına toplam planlama süresi}\label{tab:rows}\\
+\rawinput{tab_harvest.tex}
+\end{longtable}}
+
+\clearpage
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\end{document}

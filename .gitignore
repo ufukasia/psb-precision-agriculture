@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+paper2/blender/realistic/assets/polyhaven/
+paper2/blender/realistic/assets/ambientcg/
+paper2/blender/realistic/out/

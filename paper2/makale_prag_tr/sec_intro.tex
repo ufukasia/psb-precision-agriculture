@@ -1,0 +1,58 @@
+\section{Giriş}\label{sec:intro}
+
+Elma hasadı, yoğun iş gücü gerektiren seçmeli bir işlemdir: aynı ağaçtaki meyveler eşzamanlı olgunlaşmaz,
+çeşitler farklı tarihlerde olgunluğa erişir ve taze tüketime yönelik bahçelerde toplama çoğunlukla
+iki ya da daha fazla geçişte yapılır \citep{simnitt_2023_advancements,hall_2001_effect}. Robotik
+hasat makineleri günümüzde ticari bahçelerde elma toplamaktadır \citep{silwal_2017_design,
+zhang_2024_automated}; yer platformlarına kabloyla bağlanan drone'ları da içeren toplama robotu
+filoları \citep{oitzman_2021_tevel} ise geliştirilme aşamasındadır. Böyle bir filonun ağaç düzeyinde
+koordinasyonu bir rotalama problemidir: olgun meyvesi bulunan her ağaç bir robota
+atanır, her robot baş tarladaki bir istasyondan ayrılır ve oraya geri döner;
+toplama, son robot geri döndüğünde tamamlanır. Bu tamamlanma süresinin (makespan) en aza indirilmesi,
+min--maks çoklu gezgin satıcı problemine (min--maks mTSP) ve bu problemin
+kapasiteli ve çok seferli varyantlarına karşılık gelir \citep{bektas2006,bochtis2009}. Birkaç
+hektarlık bir bahçede binlerce ağaç bulunur ve plan uzun süre geçerli kalmaz: ağaç başına
+olgun meyve miktarı toplamadan önce yalnızca kabaca bilinir, robotlar çalıştıkça kameralar
+kestirimleri iyileştirir ve plan, bir robot her döndüğünde yeniden hesaplanır.
+Her yeniden hesaplamanın, robot yeniden yola çıkmaya hazır olmadan önce tamamlanması gerekir.
+
+Kullanılabilecek iki çözücü ailesi bulunmaktadır. Min--maks mTSP için tasarlanmış
+metasezgiseller \citep{hehao2022,hehao2023,hehaoxia2024,zheng2022,mahmoudinazlou2024} kıyaslama
+kümelerinde bilinen en iyi çözümlere ulaşmaktadır; genel amaçlı çözücü
+LKH-3 \citep{helsgaun2017} ise uygulamada olağan referans olarak kullanılmaktadır. Her iki aile de
+örnek başına dakikalardan saatlere uzanan bütçelerle değerlendirilmekte ve nihai değerleriyle raporlanmaktadır;
+bildiğimiz kadarıyla literatürde bu yöntemlerin ilk saniyelerdeki, bahçe büyüklüğüne ve yapısına sahip örneklerdeki
+davranışı ölçülmemiştir. Bahçeler probleme geometrik nitelikte ikinci bir boyut ekler:
+robotlar, yönelimi önceden bilinmeyen ve kafes düzeninde düzensizlikler barındıran bir dikimin
+sıra aralarında hareket eder.
+
+Bu makalenin katkıları şunlardır:
+\begin{enumerate}
+\item \textbf{PSB} (Path--Split--Balance): depolu Öklidyen min--maks mTSP için
+önce rota, sonra küme yaklaşımına dayalı bir işlem hattı: Greedy-Edge dev turu, optimal
+min--maks bölme (Lemma~\ref{lem:split}), cilalama, dengeleme ve her an sonuç veren
+(anytime) geniş komşuluk araması (LNS); ayrıca yöntemin kasa kapasiteli seferler, ağaç konumlarından
+kestirilen bahçe ekseninde oluşturulan dev tur ve olay tetiklemeli yeniden planlama ile
+bahçelere genişletilmesi.
+\item \InstAll{} örnek (mTSPLib, sentetik bahçeler, OpenStreetMap'ten alınan on altı gerçek
+bahçe sınırı, VLSI) ve büyük literatür kümelerindeki \LitCount{} örnek üzerinde, üç
+yapılandırmadaki LKH-3 ile herkese açık uygulaması bulunan, literatürde öne çıkan dört
+min--maks mTSP koduna (İlgili çalışmalar bölümünde tanıtılan HSNR, MA, MILS, HGA) karşı yürütülen, ablasyon ve tekrarlı koşular içeren,
+zaman boyutunda çözümlenmiş, tek çekirdekli bir kıyaslama. Bu kıyaslama, hangi yöntemin hangi durumda
+tercih edilmesi gerektiğini ortaya koymaktadır: ilk saniyelerden dakikalara uzanan aralıkta ve
+binlerce hedef içeren örneklerde PSB, orta büyüklükteki örnekler için birkaç dakikalık süre
+bulunduğunda ise MILS.
+\item Kablolu drone platformlarıyla taze tüketime yönelik seçmeli elma hasadının, parametreleri
+tarım literatüründen alınan ve gerçek sınırlar üzerinde kusurlu geometriye sahip
+kare dikimli ve Tall Spindle bahçelerde yürütülen ayrık olaylı benzetimi.
+Bu benzetim, PSB ile yeniden planlamayı sabit sıra bantlarına dayalı basit bir statik referansla,
+açgözlü dağıtımla, OR-Tools ile ve uç devralmalı merkezi olmayan bir $k$-d bölüntüsüyle karşılaştırmakta,
+bahçe ekseni kestiriminin katkısını ve planlama gecikmesinin etkisini
+nicel olarak ortaya koymakta ve bir duyarlılık analizi içermektedir.
+\item Her sayıyı, tabloyu ve şekli üreten tüm kodlar, kayıtlar ve betikler ile
+benzetimi yapılan görevlerin Blender ortamında hazırlanmış yeniden oynatımı.
+\end{enumerate}
+
+Makalede önce ilgili çalışmalar gözden geçirilmiş ve problem tanımlanmış, ardından PSB ile
+genişletmeleri, kıyaslama düzeneği ve sonuçları ve hasat benzetimi açıklanmış;
+son olarak çıkarımlar ve sınırlılıklar tartışılmıştır.

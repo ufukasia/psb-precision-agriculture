@@ -1,0 +1,41 @@
+Third-party min-max mTSP solvers (downloaded 2026-10-16). Wrappers: paper2/mtsp/sota.py
+
+HSNR  He & Hao, C&OR 142 (2022) 105726
+  url      https://github.com/pengfeihe-angers/mTSP   commit 268d529219eb56f898978054297e80e17b1115f3
+  license  none (README: "distributed for academic purposes only")
+  lang     C++ source in code.rar (extracted with bsdtar to he_mTSP/x/); minmax/HSNR/HSNR.rar is identical to minmax/HSNR/
+  build    g++ -O3 -march=native -w -o he_mTSP/build/hsnr he_mTSP/x/minmax/HSNR_inner/*.cpp
+           (shipped Makefile has a broken %.o: %.c rule and no -O flag; not used)
+  run      hsnr <inst> <n_customers> <time_s:int> <seed>   -> writes <name>_<k>_<seed>.txt in cwd
+  input    line1 "name EUC_2D k"; then n+1 lines "id x y", depot first; real Euclidean (double)
+  notes    stops when ceil(cpu_time) >= T, i.e. after T-1 s; wrapper passes floor(limit)+1
+
+MA    He & Hao, EJOR 307(3) (2023)
+  url      https://github.com/pengfeihe-angers/minmax-mTSP   commit e1950afd6bf954a6d45b014bfab46b51a81ad8d6
+  license  none
+  lang     Linux x86-64 binary only ("minmx mTSP.rar" -> he_minmax-mTSP/x/code/ma), no source
+  run      ma <inst> <time_s:int> <seed>   (readme in the rar mentions a 4th "iteration" arg; the binary accepts exactly 3)
+           -> writes <name>_<k>_<seed>.txt in cwd
+  input    line1 "name EUC_2D N k"; then lines "id x y", depot first; real Euclidean
+  notes    the binary reads N lines INCLUDING the depot; the shipped instance files use N = n_customers,
+           which silently drops the last customer. Wrapper writes N = n+1 (verified: all customers present).
+
+MILS  He, Hao & Xia, C&OR 185 (2026) 107255
+  url      https://github.com/pengfeihe-angers/mils   commit e575671800c5291e76825ce5c7118634c8d8d943
+  license  none
+  lang     Linux x86-64 binary only (binary_code/mils), no source
+  run      mils <inst> <out> <BKS> <time_s:float> <max_iter> <seed>; wrapper uses BKS=0, max_iter=1e9
+  input    same as MA (same N-includes-depot issue; wrapper writes N = n+1)
+
+HGA   Mahmoudinazlou & Kwon, C&OR 162 (2024) 106455
+  url      https://github.com/Sasanm88/m-TSP   commit 7d9fa1f63dfae44506f33a43aaa812793bebc065
+  license  none
+  lang     Julia (package HGSmTSP); local Julia 1.10.5 in julia/julia-1.10.5 (sha256 checked),
+           packages in julia/depot (JULIA_DEPOT_PATH), env julia/env_hga (Pkg.develop of hga_mTSP)
+  run      julia -t 1 --project=julia/env_hga hga_driver/run_hga.jl <coords> <k> <time_s> <seed> <out>
+  notes    n_iterations set to 1e9 so only the time limit stops it; Concorde (Concorde_jll) used for n < 1200
+
+Not available: ITSHA (Zheng et al. 2022; no public code, shared privately on request),
+RL-CMSA (arXiv:2602.23579; no code), ES (Karabulut et al. 2021; executable on request only),
+MASVND (Wang et al. 2017; no code). RRAP (github.com/LetterC67/RRAP, Apache-2.0) has code
+but no associated paper was found; not wrapped.

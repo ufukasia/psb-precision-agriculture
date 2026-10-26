@@ -1,0 +1,43 @@
+\section{Tartışma}\label{sec:discussion}
+
+\paragraph{Hangi durumda hangi çözücü} PSB, hedeflerin sırasını onları robotlara atamadan önce
+sabitlemekte, ardından optimal bölme rotaları eşik sınaması başına $O(nk)$ sürede dengelemektedir;
+kurulum maliyeti $n$ ile neredeyse doğrusal olarak artmakta ve ilk çözüm saniyenin küçük bir
+kesrinde elde edilmektedir. Literatürde öne çıkan
+metasezgiseller ve LKH-3 çok daha geniş bir çözüm uzayını taramakta ve yeterli süre verildiğinde
+daha iyi çözümler bulmaktadır; özellikle MILS, küçük örneklerde birkaç on saniye, orta büyüklükteki
+örneklerde ise yaklaşık iki dakika sonra PSB+LNS'yi geçmiştir. Saniyeler içinde tamamlanması
+gereken planlamada, binlerce hedef içeren örneklerde ve daha uzun bir aramaya başlangıç
+çözümü sağlamak için PSB daha uygun bir seçenektir; birkaç dakikalık sürenin bulunduğu orta büyüklükteki örneklerin
+çevrimdışı planlanmasında ise MILS daha uygundur.
+
+\paragraph{Bahçede önemli olan} Hasat benzetiminde görev süresinin büyük kısmını toplama süresi oluşturmaktadır;
+bu nedenle rotalama farkları görev süresine yüzde birkaçtan yaklaşık yüzde ona kadar uzanan
+farklar olarak yansımaktadır. En büyük etkiler, çözücünün arama gücünden bağımsız üç karardan
+kaynaklanmaktadır: toplama geçişi sırasında ortaya çıkan meyve sayılarıyla yeniden planlama,
+bahçenin kendi ekseninde planlama (PSB için yaklaşık 12\%) ve planlama süresinin kasa
+değişimleri arasındaki aralığın altında tutulması. PSB, plan başına milisaniyeler düzeyindeki süresiyle son
+koşulu sağlamaktadır; 1\,s süre sınırıyla çalışan OR-Tools PSB'ye 2--3\% yaklaşmış, 10\,s sınırla ise
+1\,ha'lık bahçelerde PSB ile benzer ortalama sonuç vermiştir. Uç devralmalı merkezi olmayan $k$-d
+bölüntüsü, merkezi yeniden planlamanın mümkün olmadığı durumlarda pratik bir alternatiftir
+ve devralma, bu yaklaşımın kaybının önemli bir kısmını telafi etmektedir.
+
+\paragraph{Sınırlılıklar} (i) Hasat sonuçları benzetimden elde edilmiştir; saha denemesi
+yapılmamıştır ve kablolu platform parametreleri sektör basınındaki tanımlamalara dayanan
+varsayımlardır. Duyarlılık analizi yalnızca Tablo~\ref{tab:params}'de aralık verilen
+parametreleri kapsar; durma/dönüş süresi gibi diğer varsayımlar ayrıca sınanmamıştır.
+(ii) Algılama, görüntüler üzerinde bir dedektör çalıştırılarak değil, istatistiksel olarak
+(yakalama oranı, kesinlik, görünür pay) modellenmiştir. (iii) Platformlar arasındaki etkileşimler
+modellenmemiştir (çarpışma ve kablo kısıtı yoktur, kasa istasyonu kapasitesi sınırsızdır) ve
+hareket, bahçe ekseninde $L_1$ uzaklıklarıyla yaklaşık olarak hesaplanmıştır; bölgede yaygın olan,
+farklı yönelimli birden çok küçük parselden oluşan işletmeler ayrıca modellenmemiştir.
+(iv) Literatürde öne çıkan kodlar tek bir tohum ve varsayılan parametrelerle çalıştırılmış,
+bunlardan ikisi yalnızca yürütülebilir dosya olarak kullanılabilmiştir; MA en büyük örnekte
+çalıştırılamamıştır. Ortak \emph{best} referansı farklı sayıda tohum içeren yöntemlerin en
+iyisinden hesaplandığından sapmalar tanımlayıcıdır; 20 eşzamanlı koşunun 12 fiziksel
+çekirdekteki bellek ve zaman paylaşımı etkileri ayrıca izole edilmemiştir.
+(v) Alt sınır ara $k$ değerleri için zayıftır; bu nedenle bahçelerdeki mutlak kalite yalnızca
+yaklaşık olarak bilinmektedir. (vi) Yöntemler eşit hasat miktarında durdurulmamıştır; bu
+nedenle süre, olgun meyve payı ve verimlilik birlikte değerlendirilmelidir. Kümelenmiş
+güven aralıkları yalnızca 8--10 bahçe--geçiş kümesine dayanır. (vii) Görselleştirme,
+benzetimin yeniden oynatımıdır; bir uçuş testi değildir.

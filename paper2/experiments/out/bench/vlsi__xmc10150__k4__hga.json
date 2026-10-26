@@ -1,0 +1,1 @@
+{"group": "vlsi", "name": "xmc10150", "n": 10150, "k": 4, "method": "hga", "cap": 600.0, "depot": [0.0, 0.0], "seed": 1, "trace": [], "mk": null, "killed": true, "wall": 1016.9729216780106, "startup": 3.673566724988632, "log": ["START"], "routes": null, "lb": 6602.778665744398, "mst": 26411.11466297759, "far": 1419.805620498806, "elapsed": 1020.8433785710076}

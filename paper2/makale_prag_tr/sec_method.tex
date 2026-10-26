@@ -1,0 +1,155 @@
+\section{PSB işlem hattı: yol, bölme, dengeleme (Path, Split, Balance)}\label{sec:method}
+
+PSB; önce rota, sonra küme yaklaşımına dayanan bir kurulum adımından \citep{beasley1983,prins2004},
+bunu izleyen ve min--maks amacına özgü bir yerel aramadan ve her an sonuç veren bir geniş komşuluk
+aramasından (LNS) oluşmaktadır. Tüm hesaplama çekirdekleri Numba \citep{lam2015numba} ile derlenmiştir. Rota başına
+çalışan hesaplama çekirdekleri yorumlayıcı kilidini serbest bıraksa da bunların paralel çalıştırılması,
+\nameref{sec:results} bölümünde raporlanan ölçümlerde kazanç sağlamamıştır; bu nedenle PSB, LKH-3 ve diğer
+çözücülerde olduğu gibi tüm deneylerde \emph{tek çekirdek} üzerinde çalıştırılmıştır. İşlem hattı Algoritma~\ref{alg:psb}'de
+özetlenmiştir.
+
+\begin{algorithm}[t]
+\caption{Her an sonuç veren LNS ile PSB (Path--Split--Balance)}\label{alg:psb}
+\begin{algorithmic}[1]
+\Require hedefler $P$, depo $D$, robot sayısı $k$, zaman bütçesi $B$
+\State $N \gets$ $K$-en yakın komşu aday listeleri ($K=10$, k-d ağacı)
+\State $\pi \gets \textsc{GreedyEdge}(P,N)$; \; $\pi\gets\textsc{TwoOptOrOpt}(\pi,N)$ \Comment{dev tur (Path)}
+\State $\{R_j\} \gets \textsc{OptimalSplit}(\pi, D, k)$ \Comment{bölme (Split), Lemma~\ref{lem:split}}
+\State tüm $j$ için $R_j \gets \textsc{TwoOptOrOpt}(\{D\}\cup R_j)$ \Comment{cilalama, her rota için bağımsız}
+\Repeat \Comment{dengeleme (Balance)}
+  \State $\max_j L(R_j)$ değerini düşüren en iyi taşıma/takas hamlesini uygula; etkilenen rotaları yeniden cilala
+\Until{iyileştiren hamle kalmayana dek}
+\While{geçen süre $< B$} \Comment{her an sonuç veren LNS}
+  \State $j^\star\gets\arg\max_j L(R_j)$; ağırlık merkezi bu rotaya en yakın $m-1$ rotayı seç
+  \State $m$-robotlu alt problemi 2--7. satırlarla yeniden çöz (rastgele başlangıç)
+  \State alt problemin tamamlanma süresi azalırsa kabul et; durağanlıkta $m$'yi büyüt
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Path: Greedy-Edge ile dev tur}
+Dev tur, Greedy-Edge (GE) sezgiseli \citep{bentley1992} ile oluşturulmuştur:
+$K$-en yakın komşu listelerinden gelen aday kenarlar artan uzunluk sırasıyla taranmış;
+bir kenar, her iki uç noktasının derecesi $<2$ olduğunda ve bir çevrimi kapatmadığında
+(union--find) kabul edilmiştir. Ortaya çıkan yol parçaları en yakın serbest uç noktalar
+üzerinden açgözlü biçimde birleştirilmiştir. GE dönmeye karşı değişmezdir ve kafes benzeri
+örnekler için yapıcı sezgiseller üzerine yürüttüğümüz tamamlayıcı çalışmada (hakem değerlendirmesinde) en
+dayanıklı tek tur yapıcı yöntem olarak öne çıkmıştır. Tur daha sonra aday listeleriyle sınırlandırılmış 2-opt \citep{croes1958} ve Or-opt \citep{or1976}
+(uzunluğu 1--3 olan segmentler, her iki yönelimde) ile, konum indeksli bir dizi gösterimi
+kullanılarak iyileştirilmiştir. GE'nin maliyeti $O(nK\log(nK))$ olup uygulamada
+sabit sayıda yerel arama geçişi kullanılmıştır; yerel arama ve dengeleme yineleme
+sayılarına veri bağımsız bir üst sınır konmadığından bu, tüm işlem hattı için
+kötü durum karmaşıklığı iddiası değildir.
+
+\subsection{Split: dev turun optimal min--maks bölünmesi}
+$\pi=(p_0,\dots,p_{n-1})$ döngüsel olarak okunan dev tur olsun. Ardışık $p_s,\dots,p_e$
+bloğundan oluşan bir rotanın uzunluğu
+$c(s,e)=d(D,p_s)+\sum_{t=s}^{e-1}d(p_t,p_{t+1})+d(p_e,D)$ olarak verilir.
+
+\begin{lemma}\label{lem:split}
+Sabit bir döngüsel sıra için (i) $c(s,e)$, $e$'ye göre azalmayan ve $s$'ye göre artmayan
+bir fonksiyondur; dolayısıyla (ii) bir $T$ eşiği için her rotayı $c\le T$ koşulunun izin verdiği
+ölçüde açgözlü biçimde uzatmak, herhangi bir $s$ başlangıcından itibaren gereken rota sayısını en aza indirir ve
+(iii) en az bir başlangıç için en fazla $k$ rotanın yettiği en küçük $T$ değeri, $\pi$'nin
+optimal min--maks bölmesini verir.
+\end{lemma}
+\begin{proof}
+(i) Üçgen eşitsizliği gereği $c(s,e+1)-c(s,e)=d(p_e,p_{e+1})+d(p_{e+1},D)-d(p_e,D)\ge 0$
+olur; $s$ için argüman simetriktir. (ii) (i) gereği, olurlu bir
+çözüm ilk rotasını $e'$ noktasında bitiriyorsa açgözlü bitiş noktası için $e\ge e'$ olur ve açgözlü çözümün kalan
+son eki diğer çözümün son ekinin içinde kalır; rota sayısı üzerinden tümevarımla
+iddia elde edilir. (iii), olurluluğun $T$'ye göre monoton olmasından
+çıkar.
+\end{proof}
+
+Önek toplamları ve iki katına çıkarılmış dizi üzerinde iki işaretçili bir taramayla her başlangıcın
+açgözlü ardılı $\mathrm{nxt}(s)$ $O(n)$ sürede hesaplanmıştır; $n$ başlangıcın tamamının
+$k$ atlamayla sınanması $O(nk)$ maliyetindedir ve $T$ üzerinde $10^{-7}$ göreli duyarlığa kadar
+yapılan ikiye bölme araması yaklaşık 25 sınama gerektirir. Dolayısıyla bölme, dev tur \emph{verildiğinde}
+optimaldir ve $n=10^4$ için bile milisaniyeler içinde hesaplanır.
+
+\subsection{Cilalama ve dengeleme}
+Depo eklendiğinde her rota küçük ve kapalı bir TSP turuna dönüşür; bu turlar aynı 2-opt/Or-opt hesaplama çekirdeğiyle
+birbirinden bağımsız olarak cilalanmıştır (doğrudan paralelleştirilebilir; yeterli çekirdek bulunduğunda her rota için
+bir iş parçacığı). Cilalama hiçbir rotanın uzunluğunu artırmaz;
+ancak bölme sınırları cilalanmamış uzunluklara göre seçildiğinden rotalar
+hafifçe dengesizleşir. \textsc{Balance} adımı bu dengesizliği, yalnızca o anda en uzun olan $R_{j^\star}$ rotası için
+ve yalnızca bu rotanın her köşesinin $K$ en yakın komşusuna yönelik değerlendirilen iki rotalar arası
+hamleyle giderir: \emph{taşıma} (relocate; $v\in R_{j^\star}$ düğümünü
+$R_{j'}$ rotasındaki bir $c$ komşusunun yanına, $c$'den önce ya da sonra taşıma) ve \emph{takas}
+(swap; $v$ ile $c$'nin yer değiştirmesi). Bir hamle,
+$\max\{L(R_{j^\star})-\Delta^-,\;L(R_{j'})+\Delta^+\}<L(R_{j^\star})$ ise, yani etkilenen
+çiftin tamamlanma süresi kesin olarak azalıyorsa uygulanmıştır. Rotalar, her robot için bir depo nöbetçi
+düğümü içeren çift bağlı bir listede saklanmış, böylece her hamlenin maliyeti $O(1)$ olmuştur; değişen
+rotalar yeniden cilalanmış ve dengeleme--cilalama döngüsü iyileşme kalmayana dek
+sürdürülmüştür.
+
+\subsection{Her an sonuç veren LNS}
+Yukarıda açıklanan biçimiyle PSB, tek atış bir yapıcı yöntemdir. Ek süreden yararlanmak için LNS,
+yinelemeli olarak en uzun rotayı ve ağırlık merkezi bu rotaya en yakın olan $m-1$ rotayı
+($m\in\{2,3,4\}$, rastgele) seçmiş, bunların hedeflerini birleştirmiş ve ortaya çıkan
+$m$-robotlu alt problemi PSB işlem hattının tamamıyla yeniden çözmüştür. Çeşitlendirme,
+alt problemin dev turu aracılığıyla sağlanmıştır: bu tur ya GE ile yeniden oluşturulmuş ya da
+mevcut rotaların depo çevresinde rastgele bozulmuş bir açısal sırayla art arda eklenmesiyle
+(her rota rastgele ters çevrilerek) başlatılmış ve ardından 2-opt/Or-opt ile iyileştirilmiştir. Yeni
+rotalar eskilerinin yerini yalnızca alt problemin tamamlanma süresi kesin olarak azaldığında almıştır;
+böylece genel tamamlanma süresi monoton (artmayan) kalmıştır. Art arda $50k$ başarısız denemeden sonra
+komşuluk genişletilmiş ($m\gets m+1$); komşuluk $k$ rotanın tamamını kapsadıktan sonra
+yeniden $50k$ kez başarısız olunduğunda LNS durdurulmuştur. Kabul edilen her iyileşme
+zaman damgasıyla kaydedilmiş, böylece aşağıda raporlanan, süreye bağlı iyileşme eğrileri elde edilmiştir.
+
+\subsection{Hasat işlemleri için uzantılar}\label{sec:ext}
+Hasat uygulaması üç değişiklik gerektirmiş;
+Path--Split--Balance yapısı ise korunmuştur. Kapasiteli çok seferler ve olay
+tetiklemeli yeniden planlamayı içeren bu varyant \emph{PSB-MT/R}
+(çok seferli/yeniden planlamalı PSB) olarak adlandırılmıştır.
+
+\paragraph{Kapasiteli seferler} Bir hasat platformu tek bir kasa taşır ve kasa her dolduğunda
+kasa istasyonuna döner; dolayısıyla her platform bir dizi
+\emph{sefer} gerçekleştirir. Dev tur verildiğinde, tahmini yükü kasa kapasitesi $Q$'yu
+aşmayan ve toplam süresi (yol, hizmet ve sefer başına bir kasa değişimi) en küçük olan
+seferlere bölme işlemi, dev tur sırası üzerinde bir en kısa yol problemine karşılık gelir; bu problem, $L$ sefer başına
+en fazla durak sayısı olmak üzere, dinamik programlamayla $O(nL)$ sürede kesin olarak
+çözülmüştür \citep{beasley1983,prins2004}. Seferler daha sonra
+her platformun hazır olma zamanını gözeten en uzun işlem süresi kuralıyla $k$ platforma atanmış,
+ardından en yüklü platform ile diğerleri arasında taşıma ve takas adımları
+(dengeleme) uygulanmıştır.
+
+\paragraph{Bahçe eksenine duyarlı dev tur} Platformlar yalnızca ağaçlar arasındaki sıra aralarında
+(koridorlarda) hareket edebildiğinden yol uzunluğu, bahçenin kendi eksen takımında ölçülmüştür: Manhattan
+($L_1$) uzaklığına, her iki koordinat birlikte değiştiğinde bir dönüş cezası eklenmiştir. Bahçe
+ekseni planlayıcıya verilmemiş, ağaç konumlarından kestirilmiştir.
+Kaba açı, her ağaçtan en yakın dört komşusuna uzanan yönlerin $90^\circ$ periyotla
+alınan dairesel ortalaması olarak hesaplanmıştır (kare ya da
+dikdörtgen bir kafeste en yakın komşular eksenler boyunca yer alır, köşegen komşular ise
+$\sqrt2$ kat daha uzaktadır; bu nedenle kestirim köşegen doğrultulara kilitlenmez). Açı
+daha sonra, izdüşürülen konumların tarak skoru en büyüklenerek $\pm5^\circ$ aralığında inceltilmiştir.
+Tarak skoru, her eksendeki izdüşüm histogramının normalize edilmiş kütleleri
+$h_b$ için $B\sum_b h_b^2$ ($B$: kutucuk sayısı) olup sıra izdüşümleri birkaç
+dar seviyede toplandığında büyür \citep{asil2026frame}. Bu eksen takımında dev tur, ağaç dizilerinin yılan biçimli
+(boustrophedon) sıralamasıdır; her iki dizi yönü denenmiş ve
+planlanan tamamlanma süresi daha küçük olan seçilmiştir. Sıralı (telli terbiye) bahçelerde aynı
+kurulum sıra araları boyunca uygulanmış; bir sıra arasından diğerine geçişte ise yol, sıra arası uçlarının
+dışbükey zarfı çevresindeki baş tarlayı izlemiştir.
+
+\paragraph{Olay tetiklemeli yeniden planlama} Bir platform kasa değişimi için her döndüğünde,
+kalan iş, ağaç başına olgun meyveye ilişkin en güncel kestirimler kullanılarak tüm filo için
+yeniden planlanmıştır (bkz.\ hasat benzetimi); hâlihazırda sürmekte olan
+seferler değiştirilmemiştir. Planlama, kasa değiştirilirken tek çekirdekte yürütülmüştür; dolayısıyla
+bir plan, platformu yalnızca hesaplanması kasa değişiminden uzun sürdüğünde geciktirir.
+
+\paragraph{Uç devralmalı k-d bölgeleri} Merkezi olmayan bir alternatif olarak tahmini
+iş yükü, kestirilen eksenler doğrultusunda bir $k$-d bölüntüsüyle bir kez $k$ adet derli toplu bölgeye ayrılmış,
+kesme çizgileri sıra aralarına yerleştirilmiştir; her platform
+kendi bölgesini yılan biçimli sırayla işlemiştir. Bir platform kendi bölgesini bitirdiğinde,
+kalan işi en fazla olan platformun geri kalan dizisini devralır: dizi, iki platformun
+aynı anda bitirmesinin beklendiği noktadan kesilir ve yardımcı platform,
+kesilen kısmın uzak ucundan başlayarak bölgenin asıl sahibi olan platforma doğru ilerler. Bu yaklaşım, bahçe geometrisine uyarlanmış
+bir iş çalma \citep{blumofe1999} biçimidir; merkezi yeniden planlama gerektirmez ve platformları
+karşılaşıncaya kadar tarlanın ayrık bölümlerinde tutar.
+
+\paragraph{Yapay zekâ araçlarının kullanımı} Yazar, metnin ve bilimsel anlatımın
+gözden geçirilmesinde yapay zekâ destekli bir araçtan düzenleme önerileri almak
+amacıyla yararlanmıştır. Yöntemin ve deneylerin tasarımı, veri analizi ve bilimsel
+sonuçların doğrulanması yazara aittir; nihai metin yazar tarafından incelenmiş ve
+onaylanmıştır.

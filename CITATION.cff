@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite the associated manuscript and this release."
+title: "Path–Split–Balance: sub-second min–max fleet planning for selective apple harvesting with tethered-drone platforms"
+version: 1.0.0
+date-released: 2026-10-26
+url: "https://github.com/ufukasia/psb-precision-agriculture"
+type: software
+authors:
+  - family-names: Asil
+    given-names: Ufuk
+    orcid: "https://orcid.org/0000-0001-6769-2097"
+license: MIT
