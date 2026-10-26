@@ -1,1 +1,0 @@
-{"group": "vlsi", "name": "ida8197", "n": 8197, "k": 16, "method": "hsnr", "cap": 600.0, "depot": [0.0, 0.0], "seed": 1, "trace": [], "mk": null, "killed": true, "wall": 960.3834811029956, "startup": null, "log": ["the solution is right"], "routes": null, "lb": 1295.363969698205, "mst": 20725.82351517128, "far": 1236.2556369942263, "elapsed": 960.5597171549744}

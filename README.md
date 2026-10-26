@@ -1,88 +1,66 @@
-# Path–Split–Balance for selective apple harvesting
+# Path–Split–Balance
 
-Reproducibility materials for the manuscript **“Path–Split–Balance: sub-second min–max fleet planning for selective apple harvesting with tethered-drone platforms”** by Ufuk Asil (OSTİM Technical University). The manuscript is under preparation for submission to *Precision Agriculture*.
+Clean source code and reproducibility materials for **“Path–Split–Balance: sub-second min–max fleet planning for selective apple harvesting with tethered-drone platforms”** by Ufuk Asil, prepared for *Precision Agriculture*.
 
-## Materials
+## Repository layout
 
-- `paper2/mtsp/`: PSB, PSB+LNS, PSB-MT and PSB-MT/R implementations and external-solver wrappers.
-- `paper2/sim/`: selective-harvest and event-based platform simulations.
-- `paper2/experiments/`: experiment drivers and analysis scripts.
-- `paper2/experiments/out/`: run-level JSON records and generated reports (about 53 MB).
-- `paper2/makale_prag_tr/`: manuscript source, figures and generated numerical macros.
-- `data_tsplib/`, `data_vlsi/`, `paper2/data/osm/`: benchmark instances used in the reported experiments.
-- `paper2/blender/`: simulation export and Blender scene/video-generation scripts.
-- `paper2/third_party/sota/SOURCES.txt`: exact sources and revisions of comparison solvers.
+- `mtsp/`: PSB, PSB+LNS, PSB-MT and PSB-MT/R; external-solver wrappers.
+- `sim/`: selective-harvest and event-based platform simulations.
+- `experiments/`: benchmark drivers, instance loaders and analysis scripts.
+- `data/`: benchmark instances and orchard data used by the experiments.
+- `blender/`: scene and video-generation scripts; no render caches or large assets.
+- `third_party/sota/SOURCES.txt`: comparison-solver sources and revisions.
 
-**Online Resource 1:** [English explainer video (1080p, 95 s)](https://github.com/ufukasia/psb-precision-agriculture/releases/download/v1.0.0/ESM_1.mp4)
+The main branch intentionally contains no manuscript build files, raw-result clutter, virtual environments, solver binaries or rendered frame caches.
 
-The video is also attached to release **v1.0.0**. Its Blender scene is an illustrative rendering of the simulation, not a physical harvesting trial.
+## Quick start
 
-## Environment
-
-Python 3.12 was used for the reported runs. Install the Python dependencies:
+Python 3.12 was used for the reported experiments.
 
 ```bash
 python -m venv .venv
 . .venv/bin/activate
 python -m pip install -r requirements.txt
-```
-
-The core PSB experiments require NumPy, SciPy and Numba only. OR-Tools is needed for the `ortools1` baseline. Matplotlib is needed for figures. Blender 5.2, FFmpeg and Pillow are needed only to regenerate the video. External comparison solvers are not redistributed here; see below.
-
-## Reproduce the reported tables and numerical macros
-
-All existing records are included, so these analysis commands do not repeat the computational experiments:
-
-```bash
-python paper2/experiments/report.py
-python paper2/experiments/make_numbers.py
-python paper2/experiments/make_numbers.py --prag-tr-quality
-```
-
-Outputs are written under `paper2/experiments/out/report/` and `paper2/makale_prag_tr/`.
-
-To rebuild the manuscript (XeLaTeX and latexmk required):
-
-```bash
-cd paper2/makale_prag_tr
-latexmk -xelatex -interaction=nonstopmode -halt-on-error main.tex
-```
-
-## Run a small PSB example
-
-```bash
 python - <<'PY'
 import sys
-sys.path[:0] = ['paper2', 'paper2/experiments']
+sys.path[:0] = ['.', 'experiments']
 import instances
 from mtsp import mm
 o = instances.orchard(10, 12, shape='rect', seed=1)
 routes, info = mm.solve(o['X'], o['Y'], o['dx'], o['dy'], k=4, workers=1)
 print('Trees:', len(o['X']))
 print('Initial makespan:', info['mk'])
-print('Initial planning time (s):', info['t_total'])
 print('Route sizes:', [len(r) for r in routes])
 PY
 ```
 
-The full drivers are `paper2/experiments/bench.py`, `ablation.py`, `harvest_bench.py` and `harvest_grid_bench.py`. They resume from existing JSON records. Running the complete benchmark is computationally expensive and requires the external solvers for non-PSB methods.
+The full experiment drivers are `experiments/bench.py`, `experiments/ablation.py`, `experiments/harvest_bench.py` and `experiments/harvest_grid_bench.py`. They resume from existing JSON records. Repeating all experiments is computationally expensive; non-PSB methods require their external solvers.
+
+## Archived results and video
+
+- [Run-level records and generated reports — ZIP](https://github.com/ufukasia/psb-precision-agriculture/releases/download/v1.0.1/psb-reproducibility-data-v1.0.0.zip)
+- [Online Resource 1 — English explainer video, 1080p, 95 s](https://github.com/ufukasia/psb-precision-agriculture/releases/download/v1.0.0/ESM_1.mp4)
+
+To regenerate all reported tables and numerical macros without repeating the experiments, extract the ZIP in the repository root. It creates `experiments/out/`. Then run:
+
+```bash
+python experiments/report.py
+python experiments/make_numbers.py
+python experiments/make_numbers.py --prag-tr-quality
+```
+
+Generated LaTeX tables and macros are written to `generated/`. The video is an illustrative Blender rendering of a simulation, not a physical harvesting trial.
 
 ## External solvers
 
-The wrappers are included, but third-party programs whose redistribution terms are unclear are excluded. Their upstream URLs, revisions and build/run notes are recorded in `paper2/third_party/sota/SOURCES.txt`.
+Third-party programs with unclear redistribution terms are not bundled. Their upstream URLs, revisions and build/run notes are in `third_party/sota/SOURCES.txt`.
 
-- **LKH-3 3.0.13:** obtain from Keld Helsgaun’s official LKH-3 distribution and compile it. Set `LKH3_BIN` to the executable.
-- **HSNR, MA, MILS and HGA:** obtain them from the authors’ repositories listed in `SOURCES.txt`. The wrapper defaults match that directory layout; `HSNR_BIN`, `MA_BIN`, `MILS_BIN` and `HGA_JULIA_DIR` can override the local paths.
-- **OR-Tools:** installed from `requirements.txt`; no bundled copy is needed.
+- **LKH-3 3.0.13:** install from Keld Helsgaun’s official distribution and set `LKH3_BIN`.
+- **HSNR, MA, MILS and HGA:** obtain from the listed author repositories. Defaults follow the documented directory layout; `HSNR_BIN`, `MA_BIN`, `MILS_BIN` and `HGA_JULIA_DIR` override local paths.
+- **OR-Tools:** installed through `requirements.txt`.
 
-## Data and media attributions
+## Attribution and license
 
-Orchard boundaries in `paper2/data/osm/` are derived from **OpenStreetMap contributors**, obtained through Overpass API, and are subject to **ODbL 1.0**. The source bounding box and OSM way identifiers are preserved in the JSON records.
+Orchard boundaries are derived from **OpenStreetMap contributors** through Overpass API and remain under **ODbL 1.0**. Source bounding boxes and way identifiers are preserved in `data/osm/`. TSPLIB/mTSPLib and Waterloo VLSI instances retain their upstream terms. Blender asset authors and CC0 sources are listed in `blender/realistic/assets/SOURCES.md`.
 
-TSPLIB/mTSPLib and Waterloo VLSI instances retain their upstream terms. TSPLIB: https://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/ ; VLSI: https://www.math.uwaterloo.ca/tsp/vlsi/index.html .
-
-Blender asset authors and CC0 sources are listed in `paper2/blender/realistic/assets/SOURCES.md`. Large downloadable assets and rendered frame caches are not stored in this repository.
-
-## License and citation
-
-Original source code is released under the MIT License (`LICENSE`). This does not replace third-party dataset or solver licenses. The explainer video is released under **CC BY 4.0**. Please cite the manuscript and the software using `CITATION.cff`; archival DOI metadata can be added after a Zenodo release.
+Original code is MIT licensed (`LICENSE`); the video is CC BY 4.0. Third-party datasets, solvers and assets retain their own licenses. Citation metadata is provided in `CITATION.cff`.

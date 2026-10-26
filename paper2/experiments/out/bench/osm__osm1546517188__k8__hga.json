@@ -1,1 +1,0 @@
-{"group": "osm", "name": "osm1546517188", "n": 420, "k": 8, "method": "hga", "cap": 120.0, "depot": [4226.0, -9.1], "seed": 1, "trace": [], "mk": null, "killed": true, "wall": 298.8777447460161, "startup": 1.155259021994425, "log": ["START"], "routes": null, "lb": 17374.847259184757, "mst": 88556.18841941807, "far": 17374.847259184757, "elapsed": 300.0414415319974}

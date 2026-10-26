@@ -1,6 +1,8 @@
 __pycache__/
 *.py[cod]
 .venv/
+experiments/out/
+generated/
 *.aux
 *.bbl
 *.blg
@@ -9,6 +11,6 @@ __pycache__/
 *.log
 *.out
 *.synctex.gz
-paper2/blender/realistic/assets/polyhaven/
-paper2/blender/realistic/assets/ambientcg/
-paper2/blender/realistic/out/
+blender/realistic/assets/polyhaven/
+blender/realistic/assets/ambientcg/
+blender/realistic/out/

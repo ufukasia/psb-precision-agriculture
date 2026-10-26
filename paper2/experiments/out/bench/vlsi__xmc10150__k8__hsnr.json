@@ -1,1 +1,0 @@
-{"group": "vlsi", "name": "xmc10150", "n": 10150, "k": 8, "method": "hsnr", "cap": 600.0, "depot": [0.0, 0.0], "seed": 1, "trace": [], "mk": null, "killed": true, "wall": 960.4606018509949, "startup": null, "log": ["the solution is right"], "routes": null, "lb": 3301.389332872199, "mst": 26411.11466297759, "far": 1419.805620498806, "elapsed": 960.6134070309927}

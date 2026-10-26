@@ -1,1 +1,0 @@
-{"group": "vlsi", "name": "ida8197", "n": 8197, "k": 8, "method": "hga", "cap": 600.0, "depot": [0.0, 0.0], "seed": 1, "trace": [], "mk": null, "killed": true, "wall": 1018.7328477709962, "startup": 1.7623150799772702, "log": ["START"], "routes": null, "lb": 2590.72793939641, "mst": 20725.82351517128, "far": 1236.2556369942263, "elapsed": 1020.6623450679763}

@@ -1,1 +1,0 @@
-{"group": "osm", "name": "osm1303115147", "n": 15089, "k": 16, "method": "hsnr", "cap": 600.0, "depot": [21206.2, 10649.5], "seed": 1, "trace": [], "mk": null, "killed": true, "wall": 961.2849253099994, "startup": null, "log": ["the solution is right"], "routes": null, "lb": 198583.54974859155, "mst": 3177336.795977465, "far": 93291.05622641434, "elapsed": 961.5719015240029}
